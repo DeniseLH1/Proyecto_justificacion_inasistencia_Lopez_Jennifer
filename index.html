@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Justificación de Inasistencias</title>
+    <style>
+        :root {
+            --bg-color: #0f232a;
+            --card-bg: #1e293b;
+            --accent-color: #0ba4d7;
+            --text-color: #3c91bc;
+            --text-muted: #94a3b8;
+            --border-color: #334c55;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            width: 100%;
+            max-width: 550px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--accent-color);
+            font-size: 24px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-color);
+            font-size: 15px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        input[type="file"] {
+            background-color: var(--bg-color);
+            padding: 10px;
+            border: 1px dashed var(--border-color);
+            border-radius: 6px;
+            width: 100%;
+            box-sizing: border-box;
+            color: var(--text-muted);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--accent-color);
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+
+        button:hover {
+            background-color: #7dd3fc;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .status-message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Justificación de Inasistencias</h2>
+    <p>Ingrese sus datos y adjunte el documento para la validación del sistema.</p>
+    
+    <form id="inasistenciaForm">
+        <div class="form-group">
+            <label for="nombre">Nombre Completo:</label>
+            <input type="text" id="nombre" name="nombre" required placeholder="Ej. Pedro Martínez">
+        </div>
+
+        <div class="form-group">
+            <label for="estudianteId">ID de Estudiante:</label>
+            <input type="text" id="estudianteId" name="estudianteId" required placeholder="Ej. 2026-00123">
+        </div>
+
+        <div class="form-group">
+            <label for="correo">Correo Electrónico:</label>
+            <input type="email" id="correo" name="correo" required placeholder="correo@gmail.com">
+        </div>
+
+        <div class="form-group">
+            <label for="motivo">Motivo de la Inasistencia:</label>
+            <select id="motivo" name="motivo" required>
+                <option value="" disabled selected>Seleccione una opción</option>
+                <option value="Enfermedad o Cita Médica">Enfermedad o Cita Médica</option>
+                <option value="Causa de Fuerza Mayor">Causa de Fuerza Mayor </option>
+                <option value="Compromisos Laborales Urgentes">Compromisos Laborales Urgentes</option>
+                <option value="Trámites Legales u Oficiales">Trámites Legales u Oficiales</option>
+                <option value="Representación Universitaria">Representación Universitaria o Académica</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="comprobante">Documento de Soporte (Imagen o PDF):</label>
+            <input type="file" id="comprobante" name="comprobante" accept="image/*,.pdf" required>
+        </div>
+
+        <input type="hidden" id="estadoInicial" name="estadoInicial" value="Pendiente">
+
+        <button type="submit">Enviar</button>
+        <div id="formStatus" class="status-message"></div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('inasistenciaForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const statusDiv = document.getElementById('formStatus');
+        statusDiv.style.display = 'block';
+        statusDiv.style.backgroundColor = '#334155';
+        statusDiv.style.color = '#f8fafc';
+        statusDiv.innerText = 'Procesando y analizando solicitud con IA...';
+
+        // REEMPLAZA ESTA URL CON TU TEST URL DE WEBHOOK (RECUERDA QUE DEBE SER EL MÉTODO POST)
+        const WEBHOOK_URL = 'http://localhost:5678/webhook-test/981bce10-66b7-4107-aea0-9ee22b7bef50';
+
+        // Usamos FormData para enviar el archivo binario y los textos juntos
+        const formData = new FormData();
+        formData.append('nombre', document.getElementById('nombre').value);
+        formData.append('idEstudiante', document.getElementById('estudianteId').value);
+        formData.append('correo', document.getElementById('correo').value);
+        formData.append('motivo', document.getElementById('motivo').value);
+        formData.append('Comprobante', document.getElementById('comprobante').files[0]);
+        
+        // Empaquetamos el estado oculto para que lo reciba tu Webhook
+        formData.append('estado', document.getElementById('estadoInicial').value);
+
+        try {
+            const response = await fetch(WEBHOOK_URL, {
+                method: 'POST', // Aseguramos que sea POST para que n8n lo reciba correctamente
+                body: formData
+            });
+
+            if (response.ok) {
+                statusDiv.style.backgroundColor = '#16a34a';
+                statusDiv.style.color = '#ffffff';
+                statusDiv.innerText = '¡Solicitud enviada con éxito! Revisa tu Telegram para actualizaciones.';
+                document.getElementById('inasistenciaForm').reset();
+            } else {
+                throw new Error('Error en el servidor de automatización.');
+            }
+        } catch (error) {
+            statusDiv.style.backgroundColor = '#dc2626';
+            statusDiv.style.color = '#ffffff';
+            statusDiv.innerText = 'Hubo un problema al enviar la solicitud. Inténtalo de nuevo.';
+            console.error('Error:', error);
+        }
+    });
+</script>
+
+</body>
+</html>
