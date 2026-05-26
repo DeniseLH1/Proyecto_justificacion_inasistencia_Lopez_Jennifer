@@ -1,5 +1,5 @@
 {
-  "name": "My workflow 6",
+  "name": "Gestor_inasistencias",
   "nodes": [
     {
       "parameters": {
@@ -145,110 +145,6 @@
     },
     {
       "parameters": {
-        "documentId": {
-          "__rl": true,
-          "value": "1wVjwxDdCWL4HiA-kpOCzuRAFDNg6qkPv1zty6k1m7rQ",
-          "mode": "list",
-          "cachedResultName": "Jutificacion_inacistencias",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wVjwxDdCWL4HiA-kpOCzuRAFDNg6qkPv1zty6k1m7rQ/edit?usp=drivesdk"
-        },
-        "sheetName": {
-          "__rl": true,
-          "value": "gid=0",
-          "mode": "list",
-          "cachedResultName": "Hoja 1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wVjwxDdCWL4HiA-kpOCzuRAFDNg6qkPv1zty6k1m7rQ/edit#gid=0"
-        },
-        "filtersUI": {
-          "values": [
-            {
-              "lookupColumn": "ID",
-              "lookupValue": "={{ $json.message.text }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
-      "position": [
-        -576,
-        -416
-      ],
-      "id": "3fcd9980-bb0d-4bd4-ae02-d96f23142107",
-      "name": "Get row(s) in sheet",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "WdorZym4xpes5TTs",
-          "name": "Google Sheets account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "rules": {
-          "values": [
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.encontrado }}",
-                    "rightValue": "Encontrado",
-                    "operator": {
-                      "type": "boolean",
-                      "operation": "true",
-                      "singleValue": true
-                    },
-                    "id": "f7fc001b-1506-488c-b8ad-cc298e0d76be"
-                  }
-                ],
-                "combinator": "and"
-              }
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "id": "084fda2c-01e9-40cf-9c79-829c7b1f072b",
-                    "leftValue": "={{ $json.encontrado }}",
-                    "rightValue": "No Encontrado",
-                    "operator": {
-                      "type": "boolean",
-                      "operation": "false",
-                      "singleValue": true
-                    }
-                  }
-                ],
-                "combinator": "and"
-              }
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3.4,
-      "position": [
-        -224,
-        -416
-      ],
-      "id": "40e5205c-7ab4-4039-803d-d61eecfcd290",
-      "name": "Switch1"
-    },
-    {
-      "parameters": {
         "operation": "appendOrUpdate",
         "documentId": {
           "__rl": true,
@@ -381,28 +277,6 @@
       "id": "d1ebb8eb-e1cc-4174-9d0f-4261e05383e8",
       "name": "Dudoso",
       "webhookId": "a53cfb44-0328-431c-8b50-94a54315ddc9",
-      "credentials": {
-        "telegramApi": {
-          "id": "c8wdaR8PrC3V8f8N",
-          "name": "Telegram account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "chatId": "={{ $('Telegram Trigger').item.json.message.text }}",
-        "text": "Lo siento, no encontré ninguna solicitud registrada con el número de ID que ingresaste.  Por favor, verifica tu número y vuelve a intentarlo.",
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        -16,
-        -352
-      ],
-      "id": "ac92ad2f-02fd-4c45-a89d-977718ee4143",
-      "name": "No encontrado",
-      "webhookId": "36ecf6ac-28b6-4c47-955f-d2b8a0b2f60d",
       "credentials": {
         "telegramApi": {
           "id": "c8wdaR8PrC3V8f8N",
@@ -689,67 +563,6 @@
           "name": "Telegram account"
         }
       }
-    },
-    {
-      "parameters": {
-        "updates": [
-          "message"
-        ],
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegramTrigger",
-      "typeVersion": 1.3,
-      "position": [
-        -752,
-        -416
-      ],
-      "id": "2cba0a46-dcc4-477a-9127-cd472cdd3465",
-      "name": "Telegram Trigger",
-      "webhookId": "24720577-b374-4d3e-8357-421d4041b88b",
-      "alwaysOutputData": false,
-      "executeOnce": false,
-      "retryOnFail": false,
-      "credentials": {
-        "telegramApi": {
-          "id": "c8wdaR8PrC3V8f8N",
-          "name": "Telegram account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "chatId": "={{ $json.chat_id }}",
-        "text": "={{ $json.texto }}",
-        "additionalFields": {}
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        -32,
-        -480
-      ],
-      "id": "39da3b73-565f-4495-8fbf-0ed775446376",
-      "name": "Encontrado",
-      "webhookId": "45dbbe5a-133d-4c77-984a-c3e294e06e7e",
-      "credentials": {
-        "telegramApi": {
-          "id": "c8wdaR8PrC3V8f8N",
-          "name": "Telegram account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "// Inicializamos el mensaje del historial\nlet mensaje = \"📋 *Historial de Solicitudes encontradas:*\\n\\n\";\n\n// Usamos la sintaxis correcta para leer las filas entrantes de n8n\nlet filas = $input.all();\n\n// Si no encuentra registros válidos o está vacío\nif (filas.length === 0 || !filas[0].json.ID) {\n  return [{ json: { encontrado: false, texto: \"❌ No se encontraron solicitudes registradas con ese ID.\" } }];\n}\n\n// Recorremos cada una de las filas encontradas en el Excel para ese ID\nfilas.forEach((item, index) => {\n  let data = item.json;\n  mensaje += `🔹 *Solicitud #${index + 1}*\\n`;\n  mensaje += `👤 Alumno: ${data.Nombre || 'N/A'}\\n`;\n  mensaje += `📊 Estado: *${data.Estado || 'Pendiente'}*\\n`;\n  mensaje += `📋 Motivo: ${data['Motivo de inasistencia'] || 'N/A'}\\n`;\n  mensaje += `📝 Detalle IA: _${data['Resultado de analisis'] || 'Sin revisar'}_\\n`;\n  mensaje += `----------------------------\\n\\n`;\n});\n\n// Retornamos los datos unificados y guardamos el chat_id dinámico\nreturn [{ \n  json: { \n    encontrado: true, \n    texto: mensaje, \n    chat_id: filas[0].json.chat_id || 8973262080 \n  } \n}];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -400,
-        -416
-      ],
-      "id": "aef09065-f660-49be-a740-1d2f2e0e9b1b",
-      "name": "Code in JavaScript"
     }
   ],
   "pinData": {},
@@ -812,35 +625,6 @@
         ]
       ]
     },
-    "Get row(s) in sheet": {
-      "main": [
-        [
-          {
-            "node": "Code in JavaScript",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Switch1": {
-      "main": [
-        [
-          {
-            "node": "Encontrado",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "No encontrado",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Dudosa": {
       "main": [
         [
@@ -873,28 +657,6 @@
           }
         ]
       ]
-    },
-    "Telegram Trigger": {
-      "main": [
-        [
-          {
-            "node": "Get row(s) in sheet",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Code in JavaScript": {
-      "main": [
-        [
-          {
-            "node": "Switch1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
   "active": true,
@@ -902,7 +664,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "6a8ab0d4-32b1-4703-9222-2beed65aaa72",
+  "versionId": "1fb9f196-3544-4270-a5ba-cd08c422f062",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "8cb19d0099f43cc7fb96142740ef56b226e967a1cace5025b7b7f9be4454fe7c"
