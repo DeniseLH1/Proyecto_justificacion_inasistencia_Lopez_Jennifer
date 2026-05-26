@@ -183,7 +183,7 @@
 <p class="font-body-md text-body-md">Se registró una falta en la clase de hoy. Por favor, completa el formulario de justificación.</p>
 </div>
 </div>
-<button class="bg-error text-on-error px-xl py-3 rounded-full font-label-md text-label-md hover:bg-opacity-90 transition-all flex items-center gap-xs">
+<button onclick="window.location.href='../Formulario.html'" class="bg-error text-on-error px-xl py-3 rounded-full font-label-md text-label-md hover:bg-opacity-90 transition-all flex items-center gap-xs">
 <span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
                     Llenar Formulario
                 </button>
@@ -394,8 +394,10 @@
 
         // Load Attendance Data from LocalStorage
         function updateUI() {
-            const mockAttendanceData = JSON.parse(localStorage.getItem('edu_attendance_record') || '{}');
-            const mateoStatus = mockAttendanceData['Mateo García'] || 'pending';
+            // Sincronizamos con la base de datos compartida con el profesor
+            const students = JSON.parse(localStorage.getItem('eduTrack_attendance') || '[]');
+            const mateo = students.find(s => s.name === 'Mateo García');
+            const mateoStatus = mateo ? mateo.status : 'none';
 
             const statusChip = document.getElementById('status-chip');
             const statusIcon = document.getElementById('status-icon');
@@ -464,7 +466,8 @@
         updateUI();
 
         window.addEventListener('storage', (e) => {
-            if (e.key === 'edu_attendance_record') {
+            // Escuchamos cambios en la asistencia del profesor
+            if (e.key === 'eduTrack_attendance') {
                 updateUI();
             }
         });

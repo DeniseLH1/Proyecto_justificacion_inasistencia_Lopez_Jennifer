@@ -3,7 +3,7 @@
 <html class="light" lang="es"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>EduTrack Pro - Panel del Profesor</title>
+<title>EduTrack Pro - Estadísticas de Clase</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -154,25 +154,35 @@
 <p class="font-label-sm text-label-sm text-secondary font-bold mt-xs">Room 402</p>
 </div>
 <ul class="space-y-base">
-<li class="flex items-center gap-md p-sm bg-secondary-fixed text-on-secondary-fixed font-bold rounded-lg cursor-pointer">
+<li>
+<a href="panel_profesor.html" class="flex items-center gap-md p-sm text-on-surface-variant hover:bg-surface-container-low transition-all cursor-pointer rounded-lg">
 <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
 <span class="font-body-md text-body-md">Panel de Control</span>
+</a>
 </li>
-<li class="flex items-center gap-md p-sm text-on-surface-variant hover:bg-surface-container-low transition-all cursor-pointer rounded-lg">
+<li>
+<a href="Asistencia.html" class="flex items-center gap-md p-sm text-on-surface-variant hover:bg-surface-container-low transition-all cursor-pointer rounded-lg">
 <span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
 <span class="font-body-md text-body-md">Asistencia</span>
+</a>
 </li>
-<li class="flex items-center gap-md p-sm text-on-surface-variant hover:bg-surface-container-low transition-all cursor-pointer rounded-lg">
-<span class="material-symbols-outlined" data-icon="campaign">campaign</span>
-<span class="font-body-md text-body-md">Anuncios</span>
+<li>
+<a href="Estadisticas.html" class="flex items-center gap-md p-sm bg-secondary-fixed text-on-secondary-fixed font-bold rounded-lg cursor-pointer">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Estadísticas</span>
+</a>
 </li>
-<li class="flex items-center gap-md p-sm text-on-surface-variant hover:bg-surface-container-low transition-all cursor-pointer rounded-lg">
+<li>
+<a href="#" class="flex items-center gap-md p-sm text-on-surface-variant hover:bg-surface-container-low transition-all cursor-pointer rounded-lg">
 <span class="material-symbols-outlined" data-icon="mail">mail</span>
 <span class="font-body-md text-body-md">Mensajes</span>
+</a>
 </li>
-<li class="flex items-center gap-md p-sm text-on-surface-variant hover:bg-surface-container-low transition-all cursor-pointer rounded-lg">
+<li>
+<a href="#" class="flex items-center gap-md p-sm text-on-surface-variant hover:bg-surface-container-low transition-all cursor-pointer rounded-lg">
 <span class="material-symbols-outlined" data-icon="settings">settings</span>
 <span class="font-body-md text-body-md">Configuración</span>
+</a>
 </li>
 </ul>
 </nav>
@@ -290,22 +300,22 @@
 </main>
 <!-- Bottom Nav (Mobile Only) -->
 <nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center h-16 bg-surface dark:bg-inverse-surface border-t border-outline-variant">
-<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 active:scale-95 duration-200">
+<a href="panel_profesor.html" class="flex flex-col items-center justify-center text-on-surface-variant active:scale-95 duration-200">
 <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
 <span class="font-label-sm text-label-sm">Dashboard</span>
-</button>
-<button class="flex flex-col items-center justify-center text-on-surface-variant active:scale-95 duration-200">
-<span class="material-symbols-outlined" data-icon="class">class</span>
-<span class="font-label-sm text-label-sm">Clases</span>
-</button>
-<button class="flex flex-col items-center justify-center text-on-surface-variant active:scale-95 duration-200">
-<span class="material-symbols-outlined" data-icon="campaign">campaign</span>
-<span class="font-label-sm text-label-sm">Avisos</span>
-</button>
-<button class="flex flex-col items-center justify-center text-on-surface-variant active:scale-95 duration-200">
+</a>
+<a href="Asistencia.html" class="flex flex-col items-center justify-center text-on-surface-variant active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+<span class="font-label-sm text-label-sm">Asistencia</span>
+</a>
+<a href="Estadisticas.html" class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 active:scale-95 duration-200">
 <span class="material-symbols-outlined" data-icon="analytics">analytics</span>
-<span class="font-label-sm text-label-sm">Reportes</span>
-</button>
+<span class="font-label-sm text-label-sm">Estadísticas</span>
+</a>
+<a href="#" class="flex flex-col items-center justify-center text-on-surface-variant active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+<span class="font-label-sm text-label-sm">Mensajes</span>
+</a>
 </nav>
 <script>
         // Initial Data
