@@ -24,7 +24,7 @@ Módulo de Consulta de Estado e Historial
 
 ![flujoConsulta](image-1.png)
 
-*  El estudiante interactúa con el bot enviando su número de carné o ID. El flujo se inicia mediante el nodo Telegram Trigger(configurado en modo *Poll/Message*).
+*  El estudiante interactúa con el bot enviando su número de carné o ID. El flujo se inicia mediante el nodo Telegram Trigger.
 
 * Se utiliza el nodo Google Sheets para buscar coincidencias por el campo ID. Al recuperar múltiples registros, permite obtener la colección completa de inasistencias vinculadas a ese alumno.
 
