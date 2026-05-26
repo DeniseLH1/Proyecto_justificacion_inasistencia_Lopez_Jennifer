@@ -35,6 +35,7 @@
       ],
       "id": "e6f24a51-9203-4b23-be81-cfe4b5df3956",
       "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "WdorZym4xpes5TTs",
@@ -49,7 +50,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        272,
+        208,
         -32
       ],
       "id": "0214e3a0-eae7-4d3c-b333-ab56fdbc09b1",
@@ -112,7 +113,7 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        496,
+        384,
         -32
       ],
       "id": "5d0467ef-54bc-4239-a5ed-631eec74d111",
@@ -120,7 +121,7 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $json.chat_id }}",
+        "chatId": "=8973262080",
         "text": "={{ $json.texto }}",
         "additionalFields": {
           "parse_mode": "Markdown"
@@ -129,7 +130,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        720,
+        576,
         -128
       ],
       "id": "b0c2a793-7b8a-4234-8497-227fdd884092",
@@ -144,7 +145,7 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $json.chat_id }}",
+        "chatId": "=8973262080",
         "text": "={{ $json.texto }}",
         "additionalFields": {
           "parse_mode": "Markdown"
@@ -153,8 +154,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        720,
-        64
+        608,
+        48
       ],
       "id": "3402983d-5207-45c3-8f27-0679dd9e5f89",
       "name": "No encontrado",
@@ -190,7 +191,20 @@
       }
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "message": {
+            "chat": {
+              "id": 8973262080
+            },
+            "text": "202301425"
+          }
+        }
+      }
+    ]
+  },
   "connections": {
     "Get row(s) in sheet": {
       "main": [
@@ -244,12 +258,12 @@
       ]
     }
   },
-  "active": true,
+  "active": false,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "b21b4e92-ea4f-4cfd-b768-8dbdcb81f5ec",
+  "versionId": "75f5a966-2f94-4815-a66c-1e73fe0780ef",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "8cb19d0099f43cc7fb96142740ef56b226e967a1cace5025b7b7f9be4454fe7c"
