@@ -1,220 +1,287 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Justificación de Inasistencias</title>
-    <style>
-        :root {
-            --bg-color: #0f232a;
-            --card-bg: #1e293b;
-            --accent-color: #0ba4d7;
-            --text-color: #3c91bc;
-            --text-muted: #94a3b8;
-            --border-color: #334c55;
-        }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduTrack Pro - Bienvenida</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface": "#f8f9fa",
+                      "secondary": "#0058be",
+                      "on-secondary": "#ffffff",
+                      "on-primary-fixed-variant": "#264191",
+                      "secondary-container": "#2170e4",
+                      "on-error": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-high": "#e7e8e9",
+                      "on-secondary-container": "#fefcff",
+                      "inverse-on-surface": "#f0f1f2",
+                      "on-primary-container": "#90a8ff",
+                      "on-surface": "#191c1d",
+                      "outline": "#757682",
+                      "on-background": "#191c1d",
+                      "on-secondary-fixed": "#001a42",
+                      "surface-container-highest": "#e1e3e4",
+                      "inverse-surface": "#2e3132",
+                      "tertiary-fixed-dim": "#4edea3",
+                      "on-tertiary-fixed": "#002113",
+                      "primary-fixed": "#dce1ff",
+                      "surface-tint": "#4059aa",
+                      "outline-variant": "#c5c5d3",
+                      "primary-fixed-dim": "#b6c4ff",
+                      "on-tertiary-fixed-variant": "#005236",
+                      "on-surface-variant": "#444651",
+                      "tertiary-fixed": "#6ffbbe",
+                      "primary": "#00236f",
+                      "surface-dim": "#d9dadb",
+                      "surface-bright": "#f8f9fa",
+                      "secondary-fixed": "#d8e2ff",
+                      "primary-container": "#1e3a8a",
+                      "surface-variant": "#e1e3e4",
+                      "tertiary": "#00311f",
+                      "error-container": "#ffdad6",
+                      "inverse-primary": "#b6c4ff",
+                      "secondary-fixed-dim": "#adc6ff",
+                      "tertiary-container": "#004a31",
+                      "surface-container-low": "#f3f4f5",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-container": "#27c38a",
+                      "on-secondary-fixed-variant": "#004395",
+                      "surface-container": "#edeeef",
+                      "on-primary-fixed": "#00164e",
+                      "error": "#ba1a1a",
+                      "background": "#f8f9fa"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "16px",
+                      "xl": "32px",
+                      "md": "16px",
+                      "sm": "12px",
+                      "xs": "4px",
+                      "container-margin-desktop": "40px",
+                      "lg": "24px",
+                      "container-margin-mobile": "16px",
+                      "base": "8px"
+              },
+              "fontFamily": {
+                      "h1-desktop": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "label-md": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "h3": ["Inter"],
+                      "body-md": ["Inter"],
+                      "h1-mobile": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "h2": ["Inter"]
+              },
+              "fontSize": {
+                      "h1-desktop": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "h3": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "h1-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "label-sm": ["12px", {"lineHeight": "14px", "fontWeight": "500"}],
+                      "h2": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+              }
+            },
+          },
         }
-
-        .container {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 30px;
-            width: 100%;
-            max-width: 550px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
-
-        h2 {
-            margin-top: 0;
-            color: var(--accent-color);
-            font-size: 24px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 10px;
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
-
-        p {
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-bottom: 25px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        select {
-            width: 100%;
-            padding: 12px;
-            box-sizing: border-box;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-color);
-            font-size: 15px;
-            transition: border-color 0.3s ease;
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        select:focus {
-            outline: none;
-            border-color: var(--accent-color);
-        }
-
-        input[type="file"] {
-            background-color: var(--bg-color);
-            padding: 10px;
-            border: 1px dashed var(--border-color);
-            border-radius: 6px;
-            width: 100%;
-            box-sizing: border-box;
-            color: var(--text-muted);
-        }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            background-color: var(--accent-color);
-            color: #000;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.1s ease;
-        }
-
-        button:hover {
-            background-color: #7dd3fc;
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        .status-message {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            text-align: center;
-            display: none;
+        .step-transition {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
-</head>
-<body>
-
-<div class="container">
-    <h2>Justificación de Inasistencias</h2>
-    <p>Ingrese sus datos y adjunte el documento para la validación del sistema.</p>
-    
-    <form id="inasistenciaForm">
-        <div class="form-group">
-            <label for="nombre">Nombre Completo:</label>
-            <input type="text" id="nombre" name="nombre" required placeholder="Ej. Pedro Martínez">
-        </div>
-
-        <div class="form-group">
-            <label for="estudianteId">ID de Estudiante:</label>
-            <input type="text" id="estudianteId" name="estudianteId" required placeholder="Ej. 2026-00123">
-        </div>
-
-        <div class="form-group">
-            <label for="correo">Correo Electrónico:</label>
-            <input type="email" id="correo" name="correo" required placeholder="correo@gmail.com">
-        </div>
-
-        <div class="form-group">
-            <label for="motivo">Motivo de la Inasistencia:</label>
-            <select id="motivo" name="motivo" required>
-                <option value="" disabled selected>Seleccione una opción</option>
-                <option value="Enfermedad o Cita Médica">Enfermedad o Cita Médica</option>
-                <option value="Causa de Fuerza Mayor">Causa de Fuerza Mayor </option>
-                <option value="Compromisos Laborales Urgentes">Compromisos Laborales Urgentes</option>
-                <option value="Trámites Legales u Oficiales">Trámites Legales u Oficiales</option>
-                <option value="Representación Universitaria">Representación Universitaria o Académica</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="comprobante">Documento de Soporte (Imagen o PDF):</label>
-            <input type="file" id="comprobante" name="comprobante" accept="image/*,.pdf" required>
-        </div>
-
-        <input type="hidden" id="estadoInicial" name="estadoInicial" value="Pendiente">
-
-        <button type="submit">Enviar</button>
-        <div id="formStatus" class="status-message"></div>
-    </form>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col">
+<header class="bg-surface dark:bg-inverse-surface shadow-sm dark:bg-surface-container flex justify-between items-center px-container-margin-mobile md:px-container-margin-desktop py-base w-full fixed top-0 z-50">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed text-[32px]">school</span>
+<h1 class="font-h2 text-h2 font-bold text-primary dark:text-primary-fixed">EduTrack Pro</h1>
 </div>
-
+</header>
+<main class="flex-grow flex items-center justify-center px-gutter pt-20 pb-10">
+<div class="max-w-4xl w-full">
+<div class="text-center mb-12">
+<h2 class="font-h1-mobile md:font-h1-desktop text-h1-mobile md:text-h1-desktop text-primary mb-4">Bienvenido al Portal</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg mx-auto">Selecciona tu perfil para acceder a la gestión de asistencia y seguimiento académico.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 step-transition opacity-100 scale-100" id="role-selection">
+<!-- Maestro Card -->
+<button class="group relative bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border-2 border-transparent hover:border-secondary flex flex-col items-center text-center overflow-hidden" onclick="showTeacherLogin()">
+<div class="w-20 h-20 bg-secondary-fixed rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined text-secondary text-[40px]">person_4</span>
+</div>
+<h3 class="font-h2 text-h2 text-primary mb-2">Maestro</h3>
+<p class="font-body-md text-on-surface-variant mb-6">Gestiona tus clases, registra asistencias y consulta reportes de rendimiento.</p>
+<div class="mt-auto flex items-center text-secondary font-bold gap-2">
+<span>Acceder como docente</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</div>
+<div class="absolute inset-0 bg-secondary opacity-0 group-hover:opacity-[0.03] pointer-events-none"></div>
+</button>
+<!-- Alumno Card -->
+<button class="group relative bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border-2 border-transparent hover:border-secondary-container flex flex-col items-center text-center overflow-hidden" onclick="goToStudentPage()">
+<div class="w-20 h-20 bg-tertiary-fixed rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined text-on-tertiary-fixed-variant text-[40px]">face_6</span>
+</div>
+<h3 class="font-h2 text-h2 text-primary mb-2">Alumno</h3>
+<p class="font-body-md text-on-surface-variant mb-6">Consulta tu historial de asistencia y tus próximos horarios de clase.</p>
+<div class="mt-auto flex items-center text-secondary-container font-bold gap-2">
+<span>Ver mi perfil</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</div>
+<div class="absolute inset-0 bg-tertiary opacity-0 group-hover:opacity-[0.03] pointer-events-none"></div>
+</button>
+</div>
+<!-- Teacher Password Section (Hidden by default) -->
+<div class="hidden max-w-md mx-auto step-transition opacity-0 scale-95" id="teacher-auth">
+<div class="bg-white p-8 rounded-xl shadow-lg border border-outline-variant">
+<button class="flex items-center text-on-surface-variant hover:text-primary mb-6 transition-colors" onclick="backToSelection()">
+<span class="material-symbols-outlined mr-2">arrow_back</span>
+<span class="font-label-md">Volver</span>
+</button>
+<div class="text-center mb-8">
+<div class="w-16 h-16 bg-secondary-fixed rounded-full flex items-center justify-center mx-auto mb-4">
+<span class="material-symbols-outlined text-secondary text-[32px]">lock</span>
+</div>
+<h3 class="font-h2 text-h2 text-primary">Acceso Docente</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Ingresa la clave de administrador para continuar.</p>
+</div>
+<form class="space-y-6" id="login-form" onsubmit="validateTeacher(event)">
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-2" for="password">Contraseña</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant focus:border-secondary focus:ring-2 focus:ring-secondary-fixed outline-none transition-all" id="password" placeholder="••••••••" required="" type="password"/>
+<p class="hidden text-error text-label-sm mt-2 flex items-center gap-1" id="error-msg">
+<span class="material-symbols-outlined text-[16px]">error</span>
+                                Contraseña incorrecta. Inténtalo de nuevo.
+                            </p>
+</div>
+<button class="w-full bg-secondary text-on-secondary py-3 rounded-lg font-bold hover:bg-primary-container transition-colors active:scale-95 duration-200" type="submit">
+                            Iniciar Sesión
+                        </button>
+<div class="text-center">
+<span class="text-on-surface-variant text-body-sm italic">Sugerencia: admin1234</span>
+</div>
+</form>
+</div>
+</div>
+</div>
+</main>
+<!-- Visual Element: Decorative Background Circles -->
+<div class="fixed top-[-10%] right-[-5%] w-96 h-96 bg-primary-fixed-dim rounded-full opacity-20 blur-3xl pointer-events-none -z-10"></div>
+<div class="fixed bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-tertiary-fixed rounded-full opacity-10 blur-3xl pointer-events-none -z-10"></div>
+<footer class="py-6 text-center text-on-surface-variant font-label-sm">
+<p>© 2024 EduTrack Pro - Sistema de Gestión Escolar Moderno</p>
+</footer>
 <script>
-    document.getElementById('inasistenciaForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const statusDiv = document.getElementById('formStatus');
-        statusDiv.style.display = 'block';
-        statusDiv.style.backgroundColor = '#334155';
-        statusDiv.style.color = '#f8fafc';
-        statusDiv.innerText = 'Procesando y analizando solicitud con IA...';
+        const selectionView = document.getElementById('role-selection');
+        const authView = document.getElementById('teacher-auth');
+        const passwordInput = document.getElementById('password');
+        const errorMsg = document.getElementById('error-msg');
 
-        // REEMPLAZA ESTA URL CON TU TEST URL DE WEBHOOK (RECUERDA QUE DEBE SER EL MÉTODO POST)
-        const WEBHOOK_URL = 'http://localhost:5678/webhook-test/981bce10-66b7-4107-aea0-9ee22b7bef50';
-
-        // Usamos FormData para enviar el archivo binario y los textos juntos
-        const formData = new FormData();
-        formData.append('nombre', document.getElementById('nombre').value);
-        formData.append('idEstudiante', document.getElementById('estudianteId').value);
-        formData.append('correo', document.getElementById('correo').value);
-        formData.append('motivo', document.getElementById('motivo').value);
-        formData.append('Comprobante', document.getElementById('comprobante').files[0]);
-        
-        // Empaquetamos el estado oculto para que lo reciba tu Webhook
-        formData.append('estado', document.getElementById('estadoInicial').value);
-
-        try {
-            const response = await fetch(WEBHOOK_URL, {
-                method: 'POST', // Aseguramos que sea POST para que n8n lo reciba correctamente
-                body: formData
-            });
-
-            if (response.ok) {
-                statusDiv.style.backgroundColor = '#16a34a';
-                statusDiv.style.color = '#ffffff';
-                statusDiv.innerText = '¡Solicitud enviada con éxito! Revisa tu Telegram para actualizaciones.';
-                document.getElementById('inasistenciaForm').reset();
-            } else {
-                throw new Error('Error en el servidor de automatización.');
-            }
-        } catch (error) {
-            statusDiv.style.backgroundColor = '#dc2626';
-            statusDiv.style.color = '#ffffff';
-            statusDiv.innerText = 'Hubo un problema al enviar la solicitud. Inténtalo de nuevo.';
-            console.error('Error:', error);
+        function showTeacherLogin() {
+            selectionView.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => {
+                selectionView.classList.add('hidden');
+                authView.classList.remove('hidden');
+                // Force layout recalculation
+                authView.offsetHeight; 
+                authView.classList.add('opacity-100', 'scale-100');
+                passwordInput.focus();
+            }, 400);
         }
-    });
-</script>
 
-</body>
-</html>
+        function backToSelection() {
+            authView.classList.remove('opacity-100', 'scale-100');
+            authView.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => {
+                authView.classList.add('hidden');
+                selectionView.classList.remove('hidden');
+                selectionView.offsetHeight;
+                selectionView.classList.remove('opacity-0', 'scale-95');
+                selectionView.classList.add('opacity-100', 'scale-100');
+                errorMsg.classList.add('hidden');
+                passwordInput.value = '';
+            }, 400);
+        }
+
+        function validateTeacher(event) {
+            event.preventDefault();
+            const pass = passwordInput.value;
+            
+            if (pass === 'admin1234') {
+                // Success animation
+                const btn = event.target.querySelector('button');
+                btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Validando...';
+                btn.classList.replace('bg-secondary', 'bg-tertiary-container');
+                
+                setTimeout(() => {
+                    window.location.href = 'maestro.html';
+                }, 1200);
+            } else {
+                errorMsg.classList.remove('hidden');
+                passwordInput.classList.add('border-error');
+                passwordInput.classList.add('animate-shake');
+                
+                // Remove shake after animation
+                setTimeout(() => {
+                    passwordInput.classList.remove('animate-shake');
+                }, 500);
+            }
+        }
+
+        function goToStudentPage() {
+            // Add a brief fade out effect
+            document.body.classList.add('transition-opacity', 'duration-500', 'opacity-0');
+            setTimeout(() => {
+                window.location.href = 'alumno.html';
+            }, 500);
+        }
+
+        // Simple shake animation in CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+            .animate-shake {
+                animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both 2;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body></html>

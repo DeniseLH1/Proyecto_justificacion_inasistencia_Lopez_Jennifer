@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - TZ=America/Guatemala_City
+      - WEBHOOK_URL=https://TU_SUBDOMINIO.ngrok-free.dev/
