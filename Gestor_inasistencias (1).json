@@ -1,0 +1,893 @@
+{
+  "name": "Gestor_inasistencias",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "981bce10-66b7-4107-aea0-9ee22b7bef50",
+        "responseMode": "lastNode",
+        "options": {
+          "binaryPropertyName": "Comprobante"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2128,
+        -1888
+      ],
+      "id": "eb46baae-1c8e-460e-8086-8ccc3e7e109c",
+      "name": "Webhook",
+      "webhookId": "981bce10-66b7-4107-aea0-9ee22b7bef50"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Actúas como un asistente de validación de justificantes escolares. Tu objetivo es realizar una revisión justa, objetiva y lógica de los archivos para confirmar que respaldan la inasistencia del estudiante, detectando solo anomalías evidentes o archivos incorrectos.\n\nAnaliza el archivo adjunto (imagen o PDF) en la propiedad binaria 'soporte' y relaciónalo con los datos del formulario:\n- Alumno: {{ $json.body.nombre }}\n- ID: {{ $json.body.idEstudiante }}\n- Motivo Seleccionado: {{ $json.body.motivo }}\n\n---\n\n### DIRECTRICES OBLIGATORIAS SEGÚN EL MOTIVO:\nVerifica el documento según el motivo seleccionado:\n\n1. 'Enfermedad' o 'Cita Médica': \n   - Debe ser una receta médica, constancia de salud o justificante médico. Debe incluir idealmente el nombre del hospital/clínica, diagnóstico o tratamiento. \n   - Si cumple y es legible = 'Aprobada'. Si está manchado o borroso = 'Dudosa'. Si no es una receta médica o está roto = 'Rechazada'.\n\n2. 'Causas de Fuerza Mayor':\n   - Debe ser un acta o certificado de defunción. Si cumple = 'Aprobada'. Si no es este documento o está roto = 'Rechazada'.\n\n3. 'Compromisos Laborales Urgentes':\n   - Debe ser una carta formal firmada que justifique la falta laboral del alumno. Si cumple = 'Aprobada'. Si no corresponde o está roto = 'Rechazada'.\n\n4. 'Trámites Legales u Oficiales':\n   - Debe ser una carta formal explicativa, citatorio o comprobante oficial que indique la razón de la citación. Si cumple = 'Aprobada'. Si no corresponde o está roto = 'Rechazada'.\n\n5. 'Representación Académica':\n   - Debe ser una nota, constancia o carta oficial de la academia o universidad justificando el permiso del alumno. Si cumple = 'Aprobada'. Si no corresponde o está roto = 'Rechazada'.\n\n---\n\n### REGLAS DE CLASIFICACIÓN (ESTADO):\n- 'Aprobada': El documento corresponde al motivo, cumple los requisitos anteriores, es claro, perfectamente legible y no está dañado.\n- 'Dudosa': El documento SÍ es el correcto para el motivo, pero la imagen está MANCHADA, borrosa o le falta algún sello o firma que siembre dudas razonables.\n- 'Rechazada': El archivo está ROTO, o no tiene NADA que ver con el tema (ej. paisajes, memes, fotos personales, facturas de supermercado, hojas en blanco).\n\n---\n\n### FORMATO DE SALIDA ESTRICTO:\nDebes responder ÚNICAMENTE con un objeto JSON válido. No agregues texto introductorio, saludos ni bloques de código de marcado (PROHIBIDO usar ```json y ```). El valor de confianza debe ser un número entero entre 1 y 100, sin símbolos.\n\n{\n  \"analisis\": \"Breve explicación objetiva del tipo de documento detectado, su estado de legibilidad y el porqué de la decisión.\",\n  \"estado\": \"Aprobada\",\n  \"confianza\": 95\n}",
+        "messages": {
+          "messageValues": []
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -1904,
+        -1888
+      ],
+      "id": "1dc933d1-f965-41b9-9675-bacde9b33323",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -1840,
+        -1664
+      ],
+      "id": "caaa43dc-7e2a-42ca-86fc-4afb903809dd",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "DKnbH3ia6XkoBfMM",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ JSON.parse($json.text).estado }}",
+                    "rightValue": "Aprobada",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e53aefa5-3c61-46e0-8957-e4906692ca89"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "84cb2685-fa93-4f3c-be1d-4699125a165b",
+                    "leftValue": "={{ JSON.parse($json.text).estado }}",
+                    "rightValue": "Dudosa",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "fb7ea91f-dff6-43f5-a652-0ecbd038b219",
+                    "leftValue": "={{ JSON.parse($json.text).estado }}",
+                    "rightValue": "Rechazada",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1552,
+        -1904
+      ],
+      "id": "901f9eab-80e2-468b-ba09-ea5680110abd",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1wVjwxDdCWL4HiA-kpOCzuRAFDNg6qkPv1zty6k1m7rQ",
+          "mode": "list",
+          "cachedResultName": "Jutificacion_inacistencias",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wVjwxDdCWL4HiA-kpOCzuRAFDNg6qkPv1zty6k1m7rQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wVjwxDdCWL4HiA-kpOCzuRAFDNg6qkPv1zty6k1m7rQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Estado": "Dudosa",
+            "Nombre": "={{ $('Webhook').item.json.body.nombre }}",
+            "ID": "={{ $('Webhook').item.json.body.idEstudiante }}",
+            "e-mail": "={{ $('Webhook').item.json.body.correo }}",
+            "Motivo de inasistencia": "={{ $('Webhook').item.json.body.motivo }}",
+            "Resultado de analisis": "={{ JSON.parse($json.text).analisis }}",
+            "Nivel de confianza": "={{ JSON.parse($json.text).confianza }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "e-mail",
+              "displayName": "e-mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Motivo de inasistencia",
+              "displayName": "Motivo de inasistencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resultado de analisis",
+              "displayName": "Resultado de analisis",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nivel de confianza",
+              "displayName": "Nivel de confianza",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1328,
+        -1888
+      ],
+      "id": "c0a27f2e-64d0-4c28-b6bf-ec0b8b87dc4d",
+      "name": "Dudosa",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WdorZym4xpes5TTs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8973262080",
+        "text": "=⚠️ *Actualización de Solicitud de Inasistencia*\n\nHola {{ $('Webhook').item.json.body.nombre }}, tu solicitud ha entrado en una fase de revisión manual por el personal administrativo.\n\n*Estado:* ⏳ Dudosa / Pendiente de Validación\n*Confianza del análisis:* {{ JSON.parse($('Basic LLM Chain').item.json.text).confianza }}%\n*Dictamen de la IA:* {{ JSON.parse($('Basic LLM Chain').item.json.text).analisis }}\n\nPor favor, mantente atento a este chat por si es necesario que adjuntes un nuevo comprobante con mayor claridad.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1104,
+        -1888
+      ],
+      "id": "d1ebb8eb-e1cc-4174-9d0f-4261e05383e8",
+      "name": "Dudoso",
+      "webhookId": "a53cfb44-0328-431c-8b50-94a54315ddc9",
+      "credentials": {
+        "telegramApi": {
+          "id": "c8wdaR8PrC3V8f8N",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8973262080",
+        "text": "=📢 *Actualización de Solicitud de Inasistencia*\n\nHola {{ $('Webhook').item.json.body.nombre }}, tu solicitud ha sido procesada por nuestro sistema de validación.\n\n*Estado:* ✅ Aprobada\n\n*Confianza del análisis:* {{ JSON.parse($('Basic LLM Chain').item.json.text).confianza }}%\n\n*Dictamen:* {{ JSON.parse($('Basic LLM Chain').item.json.text).analisis }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1104,
+        -2080
+      ],
+      "id": "a5cef9cd-6fb8-46db-b972-09a0ce276754",
+      "name": "Aprobada1",
+      "webhookId": "407c1e0b-2b6d-4589-9a2d-bb9f0e66b36c",
+      "credentials": {
+        "telegramApi": {
+          "id": "c8wdaR8PrC3V8f8N",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1wVjwxDdCWL4HiA-kpOCzuRAFDNg6qkPv1zty6k1m7rQ",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wVjwxDdCWL4HiA-kpOCzuRAFDNg6qkPv1zty6k1m7rQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nombre": "={{ $('Webhook').item.json.body.nombre }}",
+            "ID": "={{ $('Webhook').item.json.body.idEstudiante }}",
+            "e-mail": "={{ $('Webhook').item.json.body.correo }}",
+            "Motivo de inasistencia": "={{ $('Webhook').item.json.body.motivo }}",
+            "Estado": "=Aprobada",
+            "Resultado de analisis": "={{ JSON.parse($json.text).analisis }}",
+            "Nivel de confianza": "={{ JSON.parse($json.text).confianza }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "e-mail",
+              "displayName": "e-mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Motivo de inasistencia",
+              "displayName": "Motivo de inasistencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resultado de analisis",
+              "displayName": "Resultado de analisis",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nivel de confianza",
+              "displayName": "Nivel de confianza",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1328,
+        -2080
+      ],
+      "id": "e7451bb9-f227-4c47-9ba7-bdac6258070f",
+      "name": "Aprobada",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WdorZym4xpes5TTs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1wVjwxDdCWL4HiA-kpOCzuRAFDNg6qkPv1zty6k1m7rQ",
+          "mode": "list",
+          "cachedResultName": "Jutificacion_inacistencias",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wVjwxDdCWL4HiA-kpOCzuRAFDNg6qkPv1zty6k1m7rQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wVjwxDdCWL4HiA-kpOCzuRAFDNg6qkPv1zty6k1m7rQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nombre": "={{ $('Webhook').item.json.body.nombre }}",
+            "e-mail": "={{ $('Webhook').item.json.body.correo }}",
+            "ID": "={{ $('Webhook').item.json.body.idEstudiante }}",
+            "Motivo de inasistencia": "={{ $('Webhook').item.json.body.motivo }}",
+            "Estado": "Rechazado",
+            "Resultado de analisis": "={{ JSON.parse($json.text).analisis }}",
+            "Nivel de confianza": "={{ JSON.parse($json.text).confianza }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "e-mail",
+              "displayName": "e-mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Motivo de inasistencia",
+              "displayName": "Motivo de inasistencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resultado de analisis",
+              "displayName": "Resultado de analisis",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nivel de confianza",
+              "displayName": "Nivel de confianza",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1328,
+        -1696
+      ],
+      "id": "0d844aa8-1dff-4d78-a2fd-9688af420a38",
+      "name": "Rechazada",
+      "retryOnFail": false,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WdorZym4xpes5TTs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8973262080",
+        "text": "=❌ *Actualización de Solicitud de Inasistencia*\n\nHola {{ $('Webhook').item.json.body.nombre }}, lamentamos informarte que tu solicitud de justificación no ha sido aceptada por el sistema.\n\n*Estado:* ❌ Rechazada\n*Confianza del análisis:* {{ JSON.parse($('Basic LLM Chain').item.json.text).confianza }}%\n*Razón del rechazo:* {{ JSON.parse($('Basic LLM Chain').item.json.text).analisis }}\n\nSi consideras que esto es un error, por favor comunícate directamente con la coordinación académica con tu documento en físico.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1104,
+        -1696
+      ],
+      "id": "6f61d98f-0c23-4075-ba7f-9a71a771460d",
+      "name": "Rechazada1",
+      "webhookId": "152e60f8-fede-4e03-bcc9-9997d5c046ab",
+      "credentials": {
+        "telegramApi": {
+          "id": "c8wdaR8PrC3V8f8N",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1wVjwxDdCWL4HiA-kpOCzuRAFDNg6qkPv1zty6k1m7rQ",
+          "mode": "list",
+          "cachedResultName": "Jutificacion_inacistencias",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wVjwxDdCWL4HiA-kpOCzuRAFDNg6qkPv1zty6k1m7rQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1wVjwxDdCWL4HiA-kpOCzuRAFDNg6qkPv1zty6k1m7rQ/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "ID",
+              "lookupValue": "={{ $node[\"Telegram Trigger\"].json.message.text.trim() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1904,
+        -1376
+      ],
+      "id": "9ff8bc4a-4ee1-4c02-be70-51d3dcf75922",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WdorZym4xpes5TTs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node[\"Telegram Trigger\"].json.message.chat.id }}",
+        "text": "=📋 *Historial de Justificaciones Encontrado*\n\nHola, se han localizado registros asociados al Carné: *{{ $node[\"Telegram Trigger\"].json.message.text }}*\n\n👤 *Datos del Estudiante:*\n• *Nombre:* {{ $node[\"Get row(s) in sheet\"].json[\"Nombre\"] }}\n• *Correo:* {{ $node[\"Get row(s) in sheet\"].json[\"e-mail\"] }}\n• *Motivo:* {{ $node[\"Get row(s) in sheet\"].json[\"Motivo de inasistencia\"] }}\n\n🔍 *Dictamen del Sistema:*\n• *Confianza:* {{ $node[\"Get row(s) in sheet\"].json[\"Nivel de confianza\"] }}%\n• *Estado:* {{ $node[\"Get row(s) in sheet\"].json[\"Estado\"] }}\n\n📝 *Resolución detallada:*\n{{ $('Get row(s) in sheet').all().length }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1472,
+        -1472
+      ],
+      "id": "307b3905-e20b-4743-82b6-1dd4c541a6e1",
+      "name": "Encontrado",
+      "webhookId": "43350658-ce2c-4732-a451-d7c27c603138",
+      "credentials": {
+        "telegramApi": {
+          "id": "c8wdaR8PrC3V8f8N",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node[\"Telegram Trigger\"].json.message.chat.id }}",
+        "text": "=🔍 *Sin registros en el sistema*\n\nEl sistema de validación automática no localizó ninguna solicitud de justificación asociada al número de carné: *{{ $node[\"Telegram Trigger\"].json.message.text }}*\n\n⚠️ *¿Qué debes hacer?*\n1. Verifica que hayas digitado correctamente tu número de carné sin espacios.\n2. Si eres de primer ingreso, asegúrate de haber enviado primero tu solicitud formal a través del Formulario Web.\n\nSi el problema persiste, por favor comunícate con soporte técnico o el área de control académico.",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1488,
+        -1328
+      ],
+      "id": "bbd6bf54-c3fb-41c8-87ea-da2c543c73a3",
+      "name": "No encontrado",
+      "webhookId": "240271cd-f3b2-4273-bfff-53bba02794aa",
+      "credentials": {
+        "telegramApi": {
+          "id": "c8wdaR8PrC3V8f8N",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2128,
+        -1376
+      ],
+      "id": "45ab56fe-593b-4624-b0df-5496fbfb8b1a",
+      "name": "Telegram Trigger",
+      "webhookId": "d6848c49-cb49-420f-920a-2ac4e4804b77",
+      "credentials": {
+        "telegramApi": {
+          "id": "c8wdaR8PrC3V8f8N",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Get row(s) in sheet').all().length }}",
+                    "rightValue": 0,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gt"
+                    },
+                    "id": "957085ab-32d0-437f-94eb-4fae156bbce9"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "ea3d64a9-161f-4ba2-bb8c-060170ff4760",
+                    "leftValue": "={{ $('Get row(s) in sheet').all().length }}",
+                    "rightValue": 0,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1696,
+        -1376
+      ],
+      "id": "aa7f1f2b-4cb8-4c96-8684-f79aa4bd4679",
+      "name": "Switch1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Aprobada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Dudosa",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rechazada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dudosa": {
+      "main": [
+        [
+          {
+            "node": "Dudoso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aprobada": {
+      "main": [
+        [
+          {
+            "node": "Aprobada1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rechazada": {
+      "main": [
+        [
+          {
+            "node": "Rechazada1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Encontrado": {
+      "main": [
+        []
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Encontrado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No encontrado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "4b6c79b6-24c4-4b63-933a-64e17de2799b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8cb19d0099f43cc7fb96142740ef56b226e967a1cace5025b7b7f9be4454fe7c"
+  },
+  "id": "5gVmSI3RsXrgQ7qN",
+  "tags": []
+}
